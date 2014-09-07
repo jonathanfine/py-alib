@@ -145,13 +145,6 @@ def edit_body_exprs(fn, tree):
 
 if __name__ == '__main__':
 
-
-    # Here's how to create a script from a file.
-    dirname = os.path.dirname(__file__)
-    filename = os.path.join(dirname, 'test_add.py')
-    with open(filename) as f:
-        script = Script(f.read())
-
     # Here's a dummy log, for testing Script.
     class DummyEvaluator:
 
