@@ -1,13 +1,9 @@
-'''Test driver for rewriting code so far.'''
-
-# DONE: This file have been refactored.
-
 import os
 import re
-import sys
 
-from evaluator import Evaluator
-from script import Script
+if 0:
+    from evaluator import Evaluator
+    from script import Script
 
 
 # TODO: On Linux import not finding AAA.PY.
@@ -24,6 +20,9 @@ def iter_d_f(walker, d_cond, f_cond):
 
 
 def testit(filename):
+
+    print('(Not yet implemented) Testing ' + filename)
+    return
 
     with open(filename) as f:
         script = Script(f.read())
@@ -42,15 +41,3 @@ def testit(filename):
     for i, val in enumerate(evaluator.data, 1):
         if val is not None:
             print((i, val))
-
-
-
-if __name__ == '__main__':
-
-
-    for name in sys.argv[1:]:
-        if f_cond(os.path.basename(name)):
-            testit(name)
-        else:
-            for d, f in iter_d_f(os.walk(name), d_cond, f_cond):
-                testit(os.path.join(d, f))
