@@ -1,7 +1,9 @@
 '''Evaluate expressions
 '''
 
-from trytools import try_eval
+from __future__ import absolute_import
+
+from .trytools import try_eval
 import operator
 
 __metaclass__ = type
@@ -80,8 +82,8 @@ class Evaluator:
 
 if __name__ == '__main__':
 
-    from script import Script
-    from trytools import ReturnValue, ExceptionInstance
+    from .script import Script
+    from .trytools import ReturnValue, ExceptionInstance
 
     s = Script('''
 2 + 2 == 5

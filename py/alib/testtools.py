@@ -1,9 +1,11 @@
+from __future__ import absolute_import
+
 import os
 import re
 
-if 0:
-    from evaluator import Evaluator
-    from script import Script
+if 1:
+    from .evaluator import Evaluator
+    from .script import Script
 
 
 # TODO: On Linux import not finding AAA.PY.
@@ -21,8 +23,7 @@ def iter_d_f(walker, d_cond, f_cond):
 
 def testit(filename):
 
-    print('(Not yet implemented) Testing ' + filename)
-    return
+    print('Testing ' + filename)
 
     with open(filename) as f:
         script = Script(f.read())
