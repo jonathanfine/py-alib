@@ -94,7 +94,7 @@ if __name__ == '__main__':
 (1 + 1) ** Exception
 ''')
     expect = [
-        [ReturnValue(4), ReturnValue(5)],
+        (['Eq'], [ReturnValue(4), ReturnValue(5)]),
         None,
         [
             ExceptionInstance(
