@@ -1,7 +1,7 @@
 from alib.script import Script
 from alib.trytools import ReturnValue, ExceptionInstance
 from alib.evaluator import Evaluator
-
+from alib.trytools import try_eval
 
 def test_eval(src):
     script = Script(src)
@@ -15,6 +15,5 @@ test_eval('2 + 2 == 5') == (['Eq'], [ReturnValue(4), ReturnValue(5)])
 test_eval('2 + 2 == 4') == None
 test_eval('1 + [] < 4') == (
     ['Lt'],
-    [ExceptionInstance(TypeError("unsupported operand type(s) for +: 'int' and 'list'",)),
-     ReturnValue(4)]
+    [try_eval('1 + []'),ReturnValue(4)]
     )
