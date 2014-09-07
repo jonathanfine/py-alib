@@ -4,7 +4,7 @@ setup(
     name = 'alib',
     packages = ['alib'],
     version = '0.0.0',
-    description = 'A LIB-raray for testing (and other things).',
+    description = 'A LIB-rary for testing (and other things).',
     author = 'Jonathan Fine',
     author_email = 'jfine@pytex.org',
     url = 'https://github.com/jonathanfine/py-alib',
