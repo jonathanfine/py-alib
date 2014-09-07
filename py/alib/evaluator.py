@@ -85,6 +85,7 @@ if __name__ == '__main__':
     from .script import Script
     from .trytools import ReturnValue, ExceptionInstance
 
+    # I've finished refactoring these tests.
     s = Script('''
 2 + 2 == 5
 2 + 2 == 4

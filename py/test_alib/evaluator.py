@@ -11,9 +11,13 @@ def test_eval(src):
     assert len(actual) == 1
     return actual[0]
 
+
 test_eval('2 + 2 == 5') == (['Eq'], [ReturnValue(4), ReturnValue(5)])
-test_eval('2 + 2 == 4') == None
+test_eval('2 + 2 == 4') is None
+test_eval('2 < 3') is None
 test_eval('1 + [] < 4') == (
     ['Lt'],
-    [try_eval('1 + []'),ReturnValue(4)]
+    [try_eval('1 + []'), ReturnValue(4)]
     )
+test_eval('(1 + []) ** TypeError') is None
+test_eval('(1 + []) ** Exception') is None
