@@ -66,6 +66,17 @@ class ExceptionInstance(singleton):
     def exception(self):
         return self[0]
 
+    def __eq__(self, other):
+
+        if not isinstance(other, ExceptionInstance):
+            return False
+        return self.exception.args == other.exception.args
+
+    def __ne__(self, other):
+
+        return not self.__eq__(other)
+
+
 
 # TODO: Add try_call.
 def try_apply(fn, argv=[], kwargs={}):

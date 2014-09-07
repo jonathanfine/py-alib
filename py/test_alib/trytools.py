@@ -15,9 +15,8 @@ exc = ValueError('message')
 ExceptionInstance(exc).exception is exc
 ExceptionInstance(exc).value ** AttributeError
 
-ValueError('message') != ValueError('message')
 ExceptionInstance(exc) == ExceptionInstance(exc)
-ExceptionInstance(ValueError()) != ExceptionInstance(ValueError())
+ExceptionInstance(ValueError(1, 2, 3)) == ExceptionInstance(ValueError(1, 2, 3))
+ExceptionInstance(ValueError(1, 2, 3)) != 'anything else'
 
-
-
+ValueError('message') != ValueError('message') # Gotcha!
