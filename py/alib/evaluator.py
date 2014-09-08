@@ -27,8 +27,9 @@ class Evaluator:
         self.data = []
 
 
-    def compare(self, locals_dict, globals_dict, test_no, ops, codes):
+    def compare(self, locals_dict, globals_dict, test_no, ops, discard):
 
+        codes = globals_dict['_code_store'][test_no-1]
         # TODO: Special case a single operation.
         # TODO: If you special case that, make sure you test.
         clean = True
@@ -57,8 +58,9 @@ class Evaluator:
             self.data.append((ops, values))
 
 
-    def pow(self, locals_dict, globals_dict, test_no, codes):
+    def pow(self, locals_dict, globals_dict, test_no, discard):
 
+        codes = globals_dict['_code_store'][test_no-1]
         clean = True
         left, right = values = [
             try_eval(code, globals_dict, locals_dict)
