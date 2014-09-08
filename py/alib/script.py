@@ -1,6 +1,5 @@
 import ast
 import os
-import marshal
 import sys
 
 __metaclass__ = type
@@ -101,7 +100,6 @@ def log_compare(code_store, test_no, node):
                 compile(ast.Expression(v), '', 'eval')
                 for v in values
                 ], ops_arg])
-    val_args = map(marshal.dumps, code_store[-1])
 
     # Done so return new node.
     format = '_evaluator_.compare({0})'.format
@@ -122,16 +120,10 @@ def log_compare(code_store, test_no, node):
 
 def log_pow(code_store, test_no, node):
 
-    val_args = [
-        marshal.dumps(compile(ast.Expression(v), '', 'eval'))
-        for v in (node.left, node.right)
-        ]
-
     code_store.append([[
             compile(ast.Expression(v), '', 'eval')
             for v in (node.left, node.right)
             ]])
-    val_args = map(marshal.dumps, code_store[-1])
 
     format = '_evaluator_.pow({0})'.format
     new_tree = ast.parse(format(test_no), mode='exec')
