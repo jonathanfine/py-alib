@@ -104,7 +104,7 @@ def log_compare(code_store, test_no, node):
     val_args = map(marshal.dumps, code_store[-1])
 
     # Done so return new node.
-    format = '_evaluator_.compare({0}, {1})'.format
+    format = '_evaluator_.compare({0})'.format
     # TODO: Clean up this mess.
     # TODO: Check that body appears just where I expect.
     if 0:
@@ -114,7 +114,7 @@ def log_compare(code_store, test_no, node):
     else:
         # TODOD: Produces
         # Module(body=[Module(body=[Expr(value=Call( ...
-        new_tree = ast.parse(format(test_no, ops_arg), mode='exec')
+        new_tree = ast.parse(format(test_no), mode='exec')
 
     # Strip off unwanted boilerplate.
     return new_tree.body[0]
