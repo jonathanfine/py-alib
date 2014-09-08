@@ -12,7 +12,7 @@ class Script:
         # Parse source to tree, edit, compile and save resulting code.
         self.filename = filename
         tree = ast.parse(source, filename=self.filename)
-        edit_body_exprs(edit_expr, tree)
+        edit_body_exprs(self.edit_expr, tree)
         self.code = compile(tree, self.filename, 'exec')
 
 
@@ -31,6 +31,24 @@ class Script:
             )
 
         eval(self.code, globals_dict)
+
+
+    # This function helps defined the transformation we want.
+    # Wish to enumerate tests in script.
+    @staticmethod
+    def edit_expr(expr):
+        '''Start making the changes I want.'''
+
+        value = expr.value
+
+        # Filter the comparisons for change.
+        if type(value) is ast.Compare:
+            return log_compare(value)
+        elif type(value) is ast.BinOp and type(value.op) == ast.Pow:
+            return log_pow(value)
+        else:
+            # TODO: Raise exception or warning?
+            return expr             # Leave unchanged.
 
 
 # To sort out an interface mismatch
@@ -61,22 +79,6 @@ class _WrappedEvaluator:
             ) + argv[:-1] + ([marshal.loads(s) for s in argv[-1]],)
         return self._inner.pow(*argv)
 
-
-
-# This function helps defined the transformation we want.
-def edit_expr(expr):
-    '''Start making the changes I want.'''
-
-    value = expr.value
-
-    # Filter the comparisons for change.
-    if type(value) is ast.Compare:
-        return log_compare(value)
-    elif type(value) is ast.BinOp and type(value.op) == ast.Pow:
-        return log_pow(value)
-    else:
-        # TODO: Raise exception or warning?
-        return expr             # Leave unchanged.
 
 
 # This function helps defined the tranformation we want.
