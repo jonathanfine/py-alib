@@ -6,14 +6,16 @@ class DummyEvaluator:
     def __init__(self):
         self.store = []
 
-    def compare(self, *argv):
+    def run_test(self, *argv):
         # TODO: What is it that we are discarding here, and why?
-        self.store.append(argv[-1:]) # Discard local and global dicts.
+        # TODO: Test the key apppend to the store.
+        self.store.append(argv[-1:]) # Discard key, local and global dicts.
 
 # Create and run a script.
 s = Script('2 + 2 == 5;2 < 4')
+[c[0] for c in s.code_store] == ['compare', 'compare']
+# c[1] is the code objects.
 [c[2] for c in s.code_store] == [['Eq'], ['Lt']]
-
 
 evaluator = DummyEvaluator()
 s.run(evaluator)

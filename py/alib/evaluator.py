@@ -27,6 +27,20 @@ class Evaluator:
         self.data = []
 
 
+    def run_test(self, locals_dict, globals_dict, test_no):
+
+        key = globals_dict['_code_store'][test_no-1][0]
+
+        if key == 'compare':
+            self.compare(locals_dict, globals_dict, test_no)
+
+        elif key == 'pow':
+            self.pow(locals_dict, globals_dict, test_no)
+
+        else:
+            raise KeyError(key)
+
+
     def compare(self, locals_dict, globals_dict, test_no):
 
         key, codes, ops = globals_dict['_code_store'][test_no-1]

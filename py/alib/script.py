@@ -28,7 +28,7 @@ class Script:
 
         evaluator = _WrappedEvaluator(evaluator) # Interface mismatch.
         globals_dict.update(
-            _evaluator_=evaluator, # Evaluate changed expressions.
+            _run_test=evaluator.run_test, # Evaluate changed expressions.
             _code_store = self.code_store,
             )
 
@@ -60,7 +60,7 @@ class _WrappedEvaluator:
     def __init__(self, inner):
         self._inner = inner
 
-    def compare(self, *argv):
+    def run_test(self, *argv):
 
         # Prepend locals and globals to argv.
         # Assume the code sequence is the last item.
@@ -69,19 +69,7 @@ class _WrappedEvaluator:
             f_caller.f_locals,
             f_caller.f_globals
             ) + argv
-        return self._inner.compare(*argv)
-
-    def pow(self, *argv):
-
-        # Prepend locals and globals to argv.
-        # Assume the code sequence is the last item.
-        f_caller = sys._getframe().f_back
-        argv = (
-            f_caller.f_locals,
-            f_caller.f_globals
-            ) + argv
-        return self._inner.pow(*argv)
-
+        return self._inner.run_test(*argv)
 
 
 # This function helps defined the tranformation we want.
@@ -104,7 +92,7 @@ def log_compare(code_store, test_no, node):
                 ], ops_arg])
 
     # Done so return new node.
-    format = '_evaluator_.compare({0})'.format
+    format = '_run_test({0})'.format
     # TODO: Clean up this mess.
     # TODO: Check that body appears just where I expect.
     if 0:
@@ -129,7 +117,7 @@ def log_pow(code_store, test_no, node):
                 for v in (node.left, node.right)
                 ]])
 
-    format = '_evaluator_.pow({0})'.format
+    format = '_run_test({0})'.format
     new_tree = ast.parse(format(test_no), mode='exec')
 
     return new_tree.body[0]
