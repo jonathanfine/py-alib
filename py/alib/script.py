@@ -96,7 +96,9 @@ def log_compare(code_store, test_no, node):
 
     # Produce the values.
     values = [node.left] + node.comparators
-    code_store.append([[
+    code_store.append([
+            'compare',
+            [
                 compile(ast.Expression(v), '', 'eval')
                 for v in values
                 ], ops_arg])
@@ -120,10 +122,12 @@ def log_compare(code_store, test_no, node):
 
 def log_pow(code_store, test_no, node):
 
-    code_store.append([[
-            compile(ast.Expression(v), '', 'eval')
-            for v in (node.left, node.right)
-            ]])
+    code_store.append([
+            'pow',
+            [
+                compile(ast.Expression(v), '', 'eval')
+                for v in (node.left, node.right)
+                ]])
 
     format = '_evaluator_.pow({0})'.format
     new_tree = ast.parse(format(test_no), mode='exec')

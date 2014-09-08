@@ -12,7 +12,7 @@ class DummyEvaluator:
 
 # Create and run a script.
 s = Script('2 + 2 == 5;2 < 4')
-[c[1] for c in s.code_store] == [['Eq'], ['Lt']]
+[c[2] for c in s.code_store] == [['Eq'], ['Lt']]
 
 
 evaluator = DummyEvaluator()
