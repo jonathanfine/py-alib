@@ -7,7 +7,8 @@ class DummyEvaluator:
         self.store = []
 
     def compare(self, *argv):
-        self.store.append(argv[1:]) # Discard local_dict.
+        # TODO: What is it that we are discarding here, and why?
+        self.store.append(argv[2:]) # Discard local_dict.
 
 # Create and run a script.
 s = Script('2 + 2 == 5')

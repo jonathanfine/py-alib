@@ -27,7 +27,7 @@ class Evaluator:
         self.data = []
 
 
-    def compare(self, locals_dict, globals_dict, ops, codes):
+    def compare(self, locals_dict, globals_dict, test_no, ops, codes):
 
         # TODO: Special case a single operation.
         # TODO: If you special case that, make sure you test.
@@ -57,7 +57,7 @@ class Evaluator:
             self.data.append((ops, values))
 
 
-    def pow(self, locals_dict, globals_dict, codes):
+    def pow(self, locals_dict, globals_dict, test_no, codes):
 
         clean = True
         left, right = values = [

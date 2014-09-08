@@ -101,7 +101,7 @@ def log_compare(test_no, node):
         ]
 
     # Done so return new node.
-    format = '_evaluator_.compare({0}, {1})'.format
+    format = '_evaluator_.compare({0}, {1}, {2})'.format
     # TODO: Clean up this mess.
     # TODO: Check that body appears just where I expect.
     if 0:
@@ -111,7 +111,7 @@ def log_compare(test_no, node):
     else:
         # TODOD: Produces
         # Module(body=[Module(body=[Expr(value=Call( ...
-        new_tree = ast.parse(format(ops_arg, val_args), mode='exec')
+        new_tree = ast.parse(format(test_no, ops_arg, val_args), mode='exec')
 
     # Strip off unwanted boilerplate.
     return new_tree.body[0]
@@ -124,8 +124,8 @@ def log_pow(test_no, node):
         for v in (node.left, node.right)
         ]
 
-    format = '_evaluator_.pow({0})'.format
-    new_tree = ast.parse(format(val_args), mode='exec')
+    format = '_evaluator_.pow({0}, {1})'.format
+    new_tree = ast.parse(format(test_no, val_args), mode='exec')
 
     return new_tree.body[0]
 
