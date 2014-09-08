@@ -12,6 +12,7 @@ class Script:
         # Parse source to tree, edit, compile and save resulting code.
         self.test_counter = 0
         self.filename = filename
+        self.code_store = []
         tree = ast.parse(source, filename=self.filename)
         edit_body_exprs(self.edit_expr, tree)
         self.code = compile(tree, self.filename, 'exec')
@@ -29,6 +30,7 @@ class Script:
         evaluator = _WrappedEvaluator(evaluator) # Interface mismatch.
         globals_dict.update(
             _evaluator_=evaluator, # Evaluate changed expressions.
+            _code_store = self.code_store,
             )
 
         eval(self.code, globals_dict)
@@ -44,10 +46,10 @@ class Script:
         # Filter the comparisons for change.
         if type(value) is ast.Compare:
             self.test_counter += 1
-            return log_compare(self.test_counter, value)
+            return log_compare(self.code_store, self.test_counter, value)
         elif type(value) is ast.BinOp and type(value.op) == ast.Pow:
             self.test_counter += 1
-            return log_pow(self.test_counter, value)
+            return log_pow(self.code_store, self.test_counter, value)
         else:
             # TODO: Raise exception or warning?
             return expr             # Leave unchanged.
@@ -85,7 +87,7 @@ class _WrappedEvaluator:
 
 # This function helps defined the tranformation we want.
 # TODO: Rename this function.
-def log_compare(test_no, node):
+def log_compare(code_store, test_no, node):
 
     # TODO: I think this is done, but is it?
     # Replace compare node with log._compare.
@@ -95,10 +97,11 @@ def log_compare(test_no, node):
 
     # Produce the values.
     values = [node.left] + node.comparators
-    val_args = [
-        marshal.dumps(compile(ast.Expression(v), '', 'eval'))
-        for v in values
-        ]
+    code_store.append([
+            compile(ast.Expression(v), '', 'eval')
+            for v in values
+            ])
+    val_args = map(marshal.dumps, code_store[-1])
 
     # Done so return new node.
     format = '_evaluator_.compare({0}, {1}, {2})'.format
@@ -117,12 +120,18 @@ def log_compare(test_no, node):
     return new_tree.body[0]
 
 
-def log_pow(test_no, node):
+def log_pow(code_store, test_no, node):
 
     val_args = [
         marshal.dumps(compile(ast.Expression(v), '', 'eval'))
         for v in (node.left, node.right)
         ]
+
+    code_store.append([
+            compile(ast.Expression(v), '', 'eval')
+            for v in (node.left, node.right)
+            ])
+    val_args = map(marshal.dumps, code_store[-1])
 
     format = '_evaluator_.pow({0}, {1})'.format
     new_tree = ast.parse(format(test_no, val_args), mode='exec')
