@@ -1,6 +1,7 @@
 import ast
 import os
 import marshal
+import sys
 
 __metaclass__ = type
 
@@ -40,21 +41,29 @@ class _WrappedEvaluator:
 
     def compare(self, *argv):
 
+        # Prepend locals and globals to argv.
         # Assume the code sequence is the last item.
-        argv = list(argv)
-        argv[-1] = [marshal.loads(s) for s in argv[-1]]
+        f_caller = sys._getframe().f_back
+        argv = (
+            f_caller.f_locals,
+            f_caller.f_globals
+            ) + argv[:-1] + ([marshal.loads(s) for s in argv[-1]],)
         return self._inner.compare(*argv)
 
     def pow(self, *argv):
 
+        # Prepend locals and globals to argv.
         # Assume the code sequence is the last item.
-        argv = list(argv)
-        argv[-1] = [marshal.loads(s) for s in argv[-1]]
+        f_caller = sys._getframe().f_back
+        argv = (
+            f_caller.f_locals,
+            f_caller.f_globals
+            ) + argv[:-1] + ([marshal.loads(s) for s in argv[-1]],)
         return self._inner.pow(*argv)
 
 
 
-# This function helps defined the tranformation we want.
+# This function helps defined the transformation we want.
 def edit_expr(expr):
     '''Start making the changes I want.'''
 
@@ -88,7 +97,7 @@ def log_compare(node):
         ]
 
     # Done so return new node.
-    format = '_evaluator_.compare(locals(), globals(), {0}, {1})'.format
+    format = '_evaluator_.compare({0}, {1})'.format
     # TODO: Clean up this mess.
     # TODO: Check that body appears just where I expect.
     if 0:
@@ -111,7 +120,7 @@ def log_pow(node):
         for v in (node.left, node.right)
         ]
 
-    format = '_evaluator_.pow(locals(), globals(), {0})'.format
+    format = '_evaluator_.pow({0})'.format
     new_tree = ast.parse(format(val_args), mode='exec')
 
     return new_tree.body[0]
