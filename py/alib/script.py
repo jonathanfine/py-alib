@@ -10,6 +10,7 @@ class Script:
     def __init__(self, source, filename='<unknown>'):
 
         # Parse source to tree, edit, compile and save resulting code.
+        self.test_counter = 0
         self.filename = filename
         tree = ast.parse(source, filename=self.filename)
         edit_body_exprs(self.edit_expr, tree)
@@ -35,17 +36,18 @@ class Script:
 
     # This function helps defined the transformation we want.
     # Wish to enumerate tests in script.
-    @staticmethod
-    def edit_expr(expr):
+    def edit_expr(self, expr):
         '''Start making the changes I want.'''
 
         value = expr.value
 
         # Filter the comparisons for change.
         if type(value) is ast.Compare:
-            return log_compare(value)
+            self.test_counter += 1
+            return log_compare(self.test_counter, value)
         elif type(value) is ast.BinOp and type(value.op) == ast.Pow:
-            return log_pow(value)
+            self.test_counter += 1
+            return log_pow(self.test_counter, value)
         else:
             # TODO: Raise exception or warning?
             return expr             # Leave unchanged.
@@ -83,7 +85,7 @@ class _WrappedEvaluator:
 
 # This function helps defined the tranformation we want.
 # TODO: Rename this function.
-def log_compare(node):
+def log_compare(test_no, node):
 
     # TODO: I think this is done, but is it?
     # Replace compare node with log._compare.
@@ -115,7 +117,7 @@ def log_compare(node):
     return new_tree.body[0]
 
 
-def log_pow(node):
+def log_pow(test_no, node):
 
     val_args = [
         marshal.dumps(compile(ast.Expression(v), '', 'eval'))
