@@ -8,14 +8,14 @@ class DummyEvaluator:
 
     def compare(self, *argv):
         # TODO: What is it that we are discarding here, and why?
-        self.store.append(argv[2:]) # Discard local_dict.
+        self.store.append(argv[-2:]) # Discard local and global dicts.
 
 # Create and run a script.
-s = Script('2 + 2 == 5')
+s = Script('2 + 2 == 5;2 < 4')
 evaluator = DummyEvaluator()
 s.run(evaluator)
 
 # Now check the output is as expected.
-data = evaluator.store[0]
-data[1] == ['Eq']
-data[2] == [compile(s, '', 'eval') for s in ('2 + 2', '5')]
+# TODO: Start counting at 0 or at 1? System or user?
+evaluator.store[0] == (1, ['Eq']) # First test.
+evaluator.store[0] == (2, ['Lt']) # Second test.

@@ -27,7 +27,7 @@ class Evaluator:
         self.data = []
 
 
-    def compare(self, locals_dict, globals_dict, test_no, ops, discard):
+    def compare(self, locals_dict, globals_dict, test_no, ops):
 
         codes = globals_dict['_code_store'][test_no-1]
         # TODO: Special case a single operation.
@@ -58,7 +58,7 @@ class Evaluator:
             self.data.append((ops, values))
 
 
-    def pow(self, locals_dict, globals_dict, test_no, discard):
+    def pow(self, locals_dict, globals_dict, test_no):
 
         codes = globals_dict['_code_store'][test_no-1]
         clean = True
