@@ -97,10 +97,10 @@ def log_compare(code_store, test_no, node):
 
     # Produce the values.
     values = [node.left] + node.comparators
-    code_store.append([
-            compile(ast.Expression(v), '', 'eval')
-            for v in values
-            ])
+    code_store.append([[
+                compile(ast.Expression(v), '', 'eval')
+                for v in values
+                ], ops_arg])
     val_args = map(marshal.dumps, code_store[-1])
 
     # Done so return new node.
@@ -127,10 +127,10 @@ def log_pow(code_store, test_no, node):
         for v in (node.left, node.right)
         ]
 
-    code_store.append([
+    code_store.append([[
             compile(ast.Expression(v), '', 'eval')
             for v in (node.left, node.right)
-            ])
+            ]])
     val_args = map(marshal.dumps, code_store[-1])
 
     format = '_evaluator_.pow({0})'.format

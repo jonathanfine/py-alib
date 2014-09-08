@@ -18,4 +18,4 @@ s.run(evaluator)
 # Now check the output is as expected.
 # TODO: Start counting at 0 or at 1? System or user?
 evaluator.store[0] == (1, ['Eq']) # First test.
-evaluator.store[0] == (2, ['Lt']) # Second test.
+evaluator.store[1] == (2, ['Lt']) # Second test.
