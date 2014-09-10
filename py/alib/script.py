@@ -72,30 +72,23 @@ class Script:
         if globals_dict is None:
             globals_dict = {}
 
-        evaluator = _WrappedEvaluator(evaluator) # Interface mismatch.
+        def run_test(test_no):
+
+            # Prepend locals and globals to argv.
+            f_caller = sys._getframe().f_back
+            return evaluator.run_test(
+                f_caller.f_locals,
+                f_caller.f_globals,
+                test_no,
+                )
+
         globals_dict.update(
-            _run_test=evaluator.run_test, # Evaluate changed expressions.
+            _run_test=run_test, # Evaluate changed expressions.
             _code_store = self.code_store,
             )
 
         eval(self.code, globals_dict)
 
-
-# To sort out an interface mismatch
-class _WrappedEvaluator:
-
-    def __init__(self, inner):
-        self._inner = inner
-
-    def run_test(self, test_no):
-
-        # Prepend locals and globals to argv.
-        f_caller = sys._getframe().f_back
-        return self._inner.run_test(
-            f_caller.f_locals,
-            f_caller.f_globals,
-            test_no,
-            )
 
 
 
