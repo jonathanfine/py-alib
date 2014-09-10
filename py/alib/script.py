@@ -4,6 +4,16 @@ import sys
 
 __metaclass__ = type
 
+
+def make_splice_node(n):
+
+    format = '_run_test({0})'.format
+    new_tree = ast.parse(format(n), mode='exec')
+
+    # Strip off unwanted boilerplate.
+    return new_tree.body[0]
+
+
 class Script:
 
     def __init__(self, source, filename='<unknown>'):
@@ -92,20 +102,7 @@ def log_compare(code_store, test_no, node):
                 ], ops_arg])
 
     # Done so return new node.
-    format = '_run_test({0})'.format
-    # TODO: Clean up this mess.
-    # TODO: Check that body appears just where I expect.
-    if 0:
-        # TODO: Produces
-        # Expression(body=Call(func=Attribute(value=Name(id='log'
-        new_tree = ast.parse(format(ops_arg, val_args), mode='eval')
-    else:
-        # TODOD: Produces
-        # Module(body=[Module(body=[Expr(value=Call( ...
-        new_tree = ast.parse(format(test_no), mode='exec')
-
-    # Strip off unwanted boilerplate.
-    return new_tree.body[0]
+    return make_splice_node(test_no)
 
 
 def log_pow(code_store, test_no, node):
@@ -117,10 +114,8 @@ def log_pow(code_store, test_no, node):
                 for v in (node.left, node.right)
                 ]])
 
-    format = '_run_test({0})'.format
-    new_tree = ast.parse(format(test_no), mode='exec')
-
-    return new_tree.body[0]
+    # Done so return new node.
+    return make_splice_node(test_no)
 
 
 # This utility function is based on ast module.
