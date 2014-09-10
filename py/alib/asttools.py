@@ -72,3 +72,17 @@ def iter_statements(node):
             # Recursion.  Unfortunately it is quadratic.
             for item in iter_statements(sl[i]):
                 yield item
+
+
+def replace(tree, inspect, insertions):
+
+    insertions = iter(insertions)
+
+    for sl, i in iter_statements(tree):
+
+        # TODO: What about lineno and col_offset?
+        removal = inspect(sl[i])
+        if removal is None:
+            continue
+        yield removal
+        sl[i] = next(insertions)
