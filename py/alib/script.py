@@ -81,29 +81,6 @@ class Script:
         eval(self.code, globals_dict)
 
 
-    # This function helps defined the transformation we want.
-    # Wish to enumerate tests in script.
-    def edit_expr(self, expr):
-        '''Start making the changes I want.'''
-
-        node = expr             # Don't rely on node being Expr.
-        value = expr.value
-
-        # Filter the comparisons for change.
-        if type(value) is ast.Compare:
-            assert inspect(node)[0] == 'compare'
-            self.test_counter += 1
-            return log_compare(self.test_counter)
-        elif type(value) is ast.BinOp and type(value.op) == ast.Pow:
-            assert inspect(node)[0] == 'pow'
-            self.test_counter += 1
-            return log_pow(self.test_counter)
-        else:
-            assert inspect(node) is None
-            # TODO: Raise exception or warning?
-            return expr             # Leave unchanged.
-
-
 # To sort out an interface mismatch
 class _WrappedEvaluator:
 
@@ -122,38 +99,3 @@ class _WrappedEvaluator:
         return self._inner.run_test(*argv)
 
 
-# TODO: Delete when redundant.
-def log_compare(test_no):
-
-    return make_splice_node(test_no)
-
-
-def log_pow(test_no):
-
-    return make_splice_node(test_no)
-
-
-# This utility function is based on ast module.
-def edit_body_exprs(fn, tree):
-    '''Use fn to edit expressions used as statements.
-    '''
-    # TODO: I don't like this use of subclassing.
-    class Transformer(ast.NodeTransformer):
-
-        def generic_visit(self, node):
-
-            body = getattr(node, 'body', None)
-            if body is None:
-                super(Transformer, self).generic_visit(node)
-                return node
-            else:
-                node.body = [
-                    fn(line)
-                    if type(line) is ast.Expr
-                    else self.generic_visit(line)
-                    for line in body
-                    ]
-                return node
-
-    # We're editing the tree, not visiting it.
-    return Transformer().visit(tree)
