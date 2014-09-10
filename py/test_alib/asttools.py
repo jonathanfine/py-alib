@@ -3,6 +3,7 @@ import ast
 from alib.asttools import get_statement_lists
 from alib.asttools import iter_statements
 from alib.asttools import replace
+from alib.pending import Link_i_i
 
 __metaclass__ = type
 
@@ -45,28 +46,9 @@ get_statement_lists(ast.BinOp()) == () # No statements - no lists.
 tree = ast.parse(IF)
 list(replace(tree, lambda x: None, ())) # Gotcha - need list.
 
-
-# TODO: Refactor this to support inheritance.
-class Wibble:
-    '''Increment statement line numbers by 3.
-    '''
-    def __init__(self):
-        self.n = 0
-
-    def inspect(self, node):
-        self.curr = node
-        return node.lineno
-
-    def make_insertions(self):
-        while 1:
-            curr = self.curr
-            curr.lineno += 3
-            yield curr
-
-
 # TODO: Make these tests easier to write and run.
 tree = ast.parse(IF)
-w = Wibble()
+w = Link_i_i()
 
 aaa = replace(tree, w.inspect, w.make_insertions())
 list(aaa) == [1, 2, 4]
