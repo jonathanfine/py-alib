@@ -30,9 +30,22 @@ def inspect(node):
 
         value = node.value
         if type(value) is ast.Compare:
-            return 'compare', node
+            return (
+                'compare',
+                [
+                    compile(ast.Expression(v), '', 'eval')
+                    for v in [value.left] + value.comparators
+                    ],
+                [type(op).__name__ for op in value.ops]
+                )
         elif type(value) is ast.BinOp and type(value.op) is ast.Pow:
-            return 'pow', node
+            return (
+                'pow',
+                [
+                    compile(ast.Expression(v), '', 'eval')
+                    for v in (value.left, value.right)
+                    ]
+                )
 
 
 class Script:
@@ -54,6 +67,13 @@ class Script:
         removed = list(replace(tree, inspect, make_iter_splice_nodes()))
         code = compile(tree, self.filename, 'exec')
         assert len(removed) == len(self.code_store)
+
+        # Not yet ready to use the new code.
+        if 0:
+            self.code = code
+
+        # Use the new code store.
+        self.code_store = removed
 
 
     def run(self, evaluator, globals_dict=None):
