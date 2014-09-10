@@ -18,7 +18,7 @@ def make_splice_node(n):
 
 def make_iter_splice_nodes():
 
-    n = 0
+    n = 1                       # TODO: Change this strange value.
     while 1:
         yield make_splice_node(n)
         n += 1
@@ -56,21 +56,10 @@ class Script:
         self.test_counter = 0
         self.filename = filename
 
-        # Make (and use) the tree in the old way.
-        tree = ast.parse(source, filename=self.filename)
-        edit_body_exprs(self.edit_expr, tree)
-        self.code = compile(tree, self.filename, 'exec')
-
-        # Make the tree in the new way.
+        # Make and use the tree in the new way.
         tree = ast.parse(source, filename=self.filename)
         removed = list(replace(tree, inspect, make_iter_splice_nodes()))
-        code = compile(tree, self.filename, 'exec')
-
-        # Not yet ready to use the new code.
-        if 0:
-            self.code = code
-
-        # Use the new code store.
+        self.code = compile(tree, self.filename, 'exec')
         self.code_store = removed
 
 
