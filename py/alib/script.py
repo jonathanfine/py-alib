@@ -72,19 +72,21 @@ class Script:
         if globals_dict is None:
             globals_dict = {}
 
+        # Use a closure so we capture the evaluator.
+        # Could also use a instance method + functools.partial.
         def run_test(test_no):
 
-            # Prepend locals and globals to argv.
             f_caller = sys._getframe().f_back
-            return evaluator.run_test(
+            code = self.code_store[test_no]
+            key = code[0]
+            return getattr(evaluator, key)(
                 f_caller.f_locals,
                 f_caller.f_globals,
-                test_no,
+                *code[1:]
                 )
 
         globals_dict.update(
             _run_test=run_test, # Evaluate changed expressions.
-            _code_store = self.code_store,
             )
 
         eval(self.code, globals_dict)

@@ -26,25 +26,8 @@ class Evaluator:
 
         self.data = []
 
+    def compare(self, locals_dict, globals_dict, codes, ops):
 
-    def run_test(self, locals_dict, globals_dict, test_no):
-
-        key = globals_dict['_code_store'][test_no][0]
-
-        if key == 'compare':
-            self.compare(locals_dict, globals_dict, test_no)
-
-        elif key == 'pow':
-            self.pow(locals_dict, globals_dict, test_no)
-
-        else:
-            raise KeyError(key)
-
-
-    def compare(self, locals_dict, globals_dict, test_no):
-
-        key, codes, ops = globals_dict['_code_store'][test_no]
-        assert key == 'compare'
         # TODO: Special case a single operation.
         # TODO: If you special case that, make sure you test.
         clean = True
@@ -73,10 +56,8 @@ class Evaluator:
             self.data.append((ops, values))
 
 
-    def pow(self, locals_dict, globals_dict, test_no):
+    def pow(self, locals_dict, globals_dict, codes):
 
-        key, codes, = globals_dict['_code_store'][test_no]
-        assert key == 'pow'
         clean = True
         left, right = values = [
             try_eval(code, globals_dict, locals_dict)
