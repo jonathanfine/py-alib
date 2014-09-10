@@ -5,17 +5,17 @@ import operator
 # TODO: Provide tests.
 repeat_empty_tuple = itertools.repeat(())
 
-def attrgettertuple(*argv):
+def attrgettertuple(names):
     '''Always returns a tuple, whatever the length of argv.'''
 
-    n = len(argv)
+    n = len(names)
     if n == 0:
         return repeat_empty_tuple
-    getter = operator.attrgetter(*argv)
+    getter = operator.attrgetter(*names)
     if n == 1:
         return lambda x: (getter(x),)
     else:
-        return operator.attrgetter(*argv)
+        return getter
 
 
 # Not found an Python asdl parse I can use - need to build by hand
@@ -43,7 +43,7 @@ BODY_TYPES = [
 ]
 
 BODY_TYPE_LOOKUP = dict(
-    (bt[0], attrgettertuple(*bt[1:]))
+    (bt[0], attrgettertuple(bt[1:]))
     for bt in BODY_TYPES
 )
 
