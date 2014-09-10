@@ -14,6 +14,17 @@ def make_splice_node(n):
     return new_tree.body[0]
 
 
+def inspect(node):
+
+    if isinstance(node, ast.Expr):
+
+        value = node.value
+        if type(value) is ast.Compare:
+            return 'compare'
+        elif type(value) is ast.BinOp and type(value.op) is ast.Pow:
+            return 'pow'
+
+
 class Script:
 
     def __init__(self, source, filename='<unknown>'):
@@ -50,16 +61,20 @@ class Script:
     def edit_expr(self, expr):
         '''Start making the changes I want.'''
 
+        node = expr             # Don't rely on node being Expr.
         value = expr.value
 
         # Filter the comparisons for change.
         if type(value) is ast.Compare:
+            assert inspect(node) == 'compare'
             self.test_counter += 1
             return log_compare(self.code_store, self.test_counter, value)
         elif type(value) is ast.BinOp and type(value.op) == ast.Pow:
+            assert inspect(node) == 'pow'
             self.test_counter += 1
             return log_pow(self.code_store, self.test_counter, value)
         else:
+            assert inspect(node) is None
             # TODO: Raise exception or warning?
             return expr             # Leave unchanged.
 
