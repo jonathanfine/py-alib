@@ -3,7 +3,7 @@ import ast
 from alib.asttools import get_statement_lists
 from alib.asttools import iter_statements
 from alib.asttools import replace
-from alib.pending import Link_i_i
+from alib.techdebt import Link_i_i
 
 __metaclass__ = type
 
