@@ -57,7 +57,6 @@ class Script:
         self.filename = filename
 
         # Make (and use) the tree in the old way.
-        self.code_store = []
         tree = ast.parse(source, filename=self.filename)
         edit_body_exprs(self.edit_expr, tree)
         self.code = compile(tree, self.filename, 'exec')
@@ -66,7 +65,6 @@ class Script:
         tree = ast.parse(source, filename=self.filename)
         removed = list(replace(tree, inspect, make_iter_splice_nodes()))
         code = compile(tree, self.filename, 'exec')
-        assert len(removed) == len(self.code_store)
 
         # Not yet ready to use the new code.
         if 0:
@@ -106,11 +104,11 @@ class Script:
         if type(value) is ast.Compare:
             assert inspect(node)[0] == 'compare'
             self.test_counter += 1
-            return log_compare(self.code_store, self.test_counter, value)
+            return log_compare(self.test_counter)
         elif type(value) is ast.BinOp and type(value.op) == ast.Pow:
             assert inspect(node)[0] == 'pow'
             self.test_counter += 1
-            return log_pow(self.code_store, self.test_counter, value)
+            return log_pow(self.test_counter)
         else:
             assert inspect(node) is None
             # TODO: Raise exception or warning?
@@ -135,39 +133,14 @@ class _WrappedEvaluator:
         return self._inner.run_test(*argv)
 
 
-# This function helps defined the tranformation we want.
-# TODO: Rename this function.
-def log_compare(code_store, test_no, node):
+# TODO: Delete when redundant.
+def log_compare(test_no):
 
-    # TODO: I think this is done, but is it?
-    # Replace compare node with log._compare.
-    # Produce the ops.
-    ops = node.ops
-    ops_arg = [type(op).__name__ for op in ops]
-
-    # Produce the values.
-    values = [node.left] + node.comparators
-    code_store.append([
-            'compare',
-            [
-                compile(ast.Expression(v), '', 'eval')
-                for v in values
-                ], ops_arg])
-
-    # Done so return new node.
     return make_splice_node(test_no)
 
 
-def log_pow(code_store, test_no, node):
+def log_pow(test_no):
 
-    code_store.append([
-            'pow',
-            [
-                compile(ast.Expression(v), '', 'eval')
-                for v in (node.left, node.right)
-                ]])
-
-    # Done so return new node.
     return make_splice_node(test_no)
 
 
