@@ -18,7 +18,7 @@ def make_splice_node(n):
 
 def make_iter_splice_nodes():
 
-    n = 1                       # TODO: Change this strange value.
+    n = 0
     while 1:
         yield make_splice_node(n)
         n += 1
@@ -87,15 +87,15 @@ class _WrappedEvaluator:
     def __init__(self, inner):
         self._inner = inner
 
-    def run_test(self, *argv):
+    def run_test(self, test_no):
 
         # Prepend locals and globals to argv.
-        # Assume the code sequence is the last item.
         f_caller = sys._getframe().f_back
-        argv = (
+        return self._inner.run_test(
             f_caller.f_locals,
-            f_caller.f_globals
-            ) + argv
-        return self._inner.run_test(*argv)
+            f_caller.f_globals,
+            test_no,
+            )
+
 
 

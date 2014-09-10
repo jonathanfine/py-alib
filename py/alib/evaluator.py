@@ -29,7 +29,7 @@ class Evaluator:
 
     def run_test(self, locals_dict, globals_dict, test_no):
 
-        key = globals_dict['_code_store'][test_no-1][0]
+        key = globals_dict['_code_store'][test_no][0]
 
         if key == 'compare':
             self.compare(locals_dict, globals_dict, test_no)
@@ -43,7 +43,7 @@ class Evaluator:
 
     def compare(self, locals_dict, globals_dict, test_no):
 
-        key, codes, ops = globals_dict['_code_store'][test_no-1]
+        key, codes, ops = globals_dict['_code_store'][test_no]
         assert key == 'compare'
         # TODO: Special case a single operation.
         # TODO: If you special case that, make sure you test.
@@ -75,7 +75,7 @@ class Evaluator:
 
     def pow(self, locals_dict, globals_dict, test_no):
 
-        key, codes, = globals_dict['_code_store'][test_no-1]
+        key, codes, = globals_dict['_code_store'][test_no]
         assert key == 'pow'
         clean = True
         left, right = values = [

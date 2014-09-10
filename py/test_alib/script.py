@@ -22,5 +22,6 @@ s.run(evaluator)
 
 # Now check the output is as expected.
 # TODO: Start counting at 0 or at 1? System or user?
-evaluator.store[0] == (1,) # First test.
-evaluator.store[1] == (2,) # Second test.
+# TODO: Not obvious what this test does.
+evaluator.store[0] == (0,) # First test.
+evaluator.store[1] == (1,) # Second test.
