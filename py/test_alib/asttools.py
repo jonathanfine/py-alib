@@ -1,6 +1,7 @@
 import ast
 
 from alib.asttools import get_statement_lists
+from alib.asttools import iter_statements
 
 'body' in ast.If()._fields      # Gotcha - ast.If() has body?
 ast.If().body ** AttributeError # Gotcha - has no body.
@@ -28,5 +29,10 @@ sl[1][0].lineno == 4
 
 len(sl) == 2
 
+# TODO: This teset is a bit ugly.
 get_statement_lists(ast.BinOp()) == () # No statements - no lists.
-
+[
+    s[i].lineno
+    for s, i
+    in iter_statements( ast.parse(IF))
+] == [1, 2, 4]                  # Powers of two, as it happens.

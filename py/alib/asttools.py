@@ -47,9 +47,28 @@ BODY_TYPE_LOOKUP = dict(
     for bt in BODY_TYPES
 )
 
+
 def get_statement_lists(node):
     '''Return tuple of the statement lists for the node.'''
 
     key = type(node).__name__
     fn = BODY_TYPE_LOOKUP.get(key)
     return fn(node) if fn else ()
+
+
+# TODO: Only dependency is get_statement_lists - make it a parameter,
+# say by using a function factory.  Once done, this belongs in
+# alib.treetools.
+def iter_statements(node):
+
+    # Yield, in document order, the statements in the node.
+
+    sls = get_statement_lists(node)
+
+    for sl in sls:
+        for i in range(len(sl)):
+            yield sl, i         # So sl[i] is the current statement.
+
+            # Recursion.  Unfortunately it is quadratic.
+            for item in iter_statements(sl[i]):
+                yield item
