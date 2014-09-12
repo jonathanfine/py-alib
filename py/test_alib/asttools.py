@@ -3,9 +3,15 @@ import ast
 from alib.asttools import get_statement_lists
 from alib.asttools import iter_statements
 from alib.asttools import replace
+from alib.asttools import parse_expr
 from alib.techdebt import Link_i_i
 
 __metaclass__ = type
+
+ast.dump(parse_expr('1')) == 'Num(n=1)'
+ast.dump(parse_expr('None')) == 'NameConstant(value=None)'
+ast.dump(parse_expr('True')) == 'NameConstant(value=True)'
+
 
 'body' in ast.If()._fields      # Gotcha - ast.If() has body?
 ast.If().body ** AttributeError # Gotcha - has no body.
@@ -55,3 +61,5 @@ list(aaa) == [1, 2, 4]
 
 aaa = replace(tree, w.inspect, w.make_insertions())
 list(aaa) == [4, 5, 7]
+
+

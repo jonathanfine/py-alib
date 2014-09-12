@@ -1,3 +1,4 @@
+import ast
 import itertools
 import operator
 
@@ -46,6 +47,14 @@ BODY_TYPE_LOOKUP = dict(
     (bt[0], attrgettertuple(bt[1:]))
     for bt in BODY_TYPES
 )
+
+
+def parse_expr(s):
+    '''Parse string and return corresponding expr.
+    '''
+    root = ast.parse(s, mode='eval')
+    return root.body
+
 
 
 def get_statement_lists(node):
