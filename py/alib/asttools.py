@@ -1,10 +1,11 @@
 import ast
-import itertools
+from functools import partial
+from itertools import repeat
 import operator
 
 # TODO: Migrate to alib.itertools (perhaps).
 # TODO: Provide tests.
-repeat_empty_tuple = itertools.repeat(())
+repeat_empty_tuple = repeat(())
 
 def attrgettertuple(names):
     '''Always returns a tuple, whatever the length of argv.'''
@@ -23,7 +24,7 @@ def attrgettertuple(names):
 # what I need.  Doesn't take long.  Easier to do by hand than to write
 # and test a program to do this.
 
-BODY_TYPES = [
+BODY_TYPES = (
     # (name, attribute_names).
 
     ('Module', ('body',)),
@@ -41,7 +42,7 @@ BODY_TYPES = [
     ('Try', ('body', 'orelse', 'finalbody')), # Python 3 only.
     ('TryExcept', ('body', 'orelse')), # Python 2.6 and 2.7 only.
     ('TryFinally', ('body', 'finalbody')), # Python 2.6 and 2.7 only.
-]
+)
 
 BODY_TYPE_LOOKUP = dict(
     (key, attrgettertuple(attribute_names))
@@ -49,19 +50,50 @@ BODY_TYPE_LOOKUP = dict(
 )
 
 
+EXPR_TYPES = (
+    # We're ommiting ctx.  Hope this is OK.
+    ('Call', ('func', 'args', 'keywords', 'starargs', 'kwargs')),
+    ('Name', ('id',)),
+    ('NameConstant', ('value',)),
+    ('Num', ('n',)),
+)
+
+
+EXPR_TYPE_LOOKUP = dict(
+    (key, attrgettertuple(attribute_names))
+    for key, attribute_names in EXPR_TYPES
+)
+
+
+
+def _generic_lookup(lookup, default, node):
+
+    key = type(node).__name__
+    fn = lookup.get(key, default)
+    return fn(node)
+
+
+# TODO: Add docstring.
+'''Return tuple of the statement lists for the node.'''
+get_statement_lists = partial(
+    _generic_lookup,
+    BODY_TYPE_LOOKUP,
+    lambda node: ()
+    )
+
+
+get_expr_attributes = partial(
+    _generic_lookup,
+    EXPR_TYPE_LOOKUP,
+    None                        # Raise exception.
+    )
+
+
 def parse_expr(s):
     '''Parse string and return corresponding expr.
     '''
     root = ast.parse(s, mode='eval')
     return root.body
-
-
-def get_statement_lists(node):
-    '''Return tuple of the statement lists for the node.'''
-
-    key = type(node).__name__
-    fn = BODY_TYPE_LOOKUP.get(key)
-    return fn(node) if fn else ()
 
 
 # TODO: Only dependency is get_statement_lists - make it a parameter,
