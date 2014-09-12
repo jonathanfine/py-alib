@@ -24,28 +24,28 @@ def attrgettertuple(names):
 # and test a program to do this.
 
 BODY_TYPES = [
-    # (<Name>, <stmt* fields>).
+    # (name, attribute_names).
 
-    ('Module', 'body'),
-    ('Interactive', 'body'),
-    ('Suite', 'body'),
-    ('FunctionDef', 'body'),
-    ('ClassDef', 'body'),
+    ('Module', ('body',)),
+    ('Interactive', ('body',)),
+    ('Suite', ('body',)),
+    ('FunctionDef', ('body',)),
+    ('ClassDef', ('body',)),
 
-    ('For', 'body', 'orelse'),
-    ('While', 'body', 'orelse'),
-    ('If', 'body', 'orelse'),
+    ('For', ('body', 'orelse')),
+    ('While', ('body', 'orelse')),
+    ('If', ('body', 'orelse')),
 
-    ('With', 'body'),
+    ('With', ('body',)),
 
-    ('Try', 'body', 'orelse', 'finalbody'), # Python 3 only.
-    ('TryExcept', 'body', 'orelse'), # Python 2.6 and 2.7 only.
-    ('TryFinally', 'body', 'finalbody'), # Python 2.6 and 2.7 only.
+    ('Try', ('body', 'orelse', 'finalbody')), # Python 3 only.
+    ('TryExcept', ('body', 'orelse')), # Python 2.6 and 2.7 only.
+    ('TryFinally', ('body', 'finalbody')), # Python 2.6 and 2.7 only.
 ]
 
 BODY_TYPE_LOOKUP = dict(
-    (bt[0], attrgettertuple(bt[1:]))
-    for bt in BODY_TYPES
+    (key, attrgettertuple(attribute_names))
+    for key, attribute_names in BODY_TYPES
 )
 
 
@@ -54,7 +54,6 @@ def parse_expr(s):
     '''
     root = ast.parse(s, mode='eval')
     return root.body
-
 
 
 def get_statement_lists(node):
