@@ -12,6 +12,17 @@ from ..trytools import try_eval
 __metaclass__ = type
 
 
+def inspect(node):
+
+    if isinstance(node, ast.Expr):
+
+        value = node.value
+        if type(value) is ast.Compare:
+            return Compare(value)
+        elif type(value) is ast.BinOp and type(value.op) is ast.Pow:
+            return Pow(value)
+
+
 compare_dict = dict(
     # TODO: Finish this dict.
     Eq = operator.eq,

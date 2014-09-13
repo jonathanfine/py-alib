@@ -4,8 +4,7 @@ import itertools
 import os
 import sys
 from ..asttools import replace
-from .evaluator import Compare
-from .evaluator import Pow
+from .evaluator import inspect
 
 __metaclass__ = type
 
@@ -24,17 +23,6 @@ def make_iter_splice_nodes():
     while 1:
         yield make_splice_node(n)
         n += 1
-
-
-def inspect(node):
-
-    if isinstance(node, ast.Expr):
-
-        value = node.value
-        if type(value) is ast.Compare:
-            return Compare(value)
-        elif type(value) is ast.BinOp and type(value.op) is ast.Pow:
-            return Pow(value)
 
 
 class Script:
