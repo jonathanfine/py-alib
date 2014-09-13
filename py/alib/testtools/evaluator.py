@@ -4,9 +4,11 @@
 from __future__ import absolute_import
 
 import ast
+import copy
 import operator
 
 from ..trytools import try_eval
+from ..trytools import try_apply
 
 
 __metaclass__ = type
@@ -34,7 +36,14 @@ compare_dict = dict(
     )
 
 
+def get_args(*argv, **kwargs):
+    return argv, kwargs
+
+
 def eval_code_factory(l_dict, g_dict):
+
+    # TODO: Don't modify a dictionary you don't own.
+    l_dict['@get_args'] = get_args
 
     def eval_code(code):
 
@@ -117,3 +126,34 @@ def pow_factory(node):
             return values
 
     return pow
+
+
+def call_factory(root):
+
+    # TODO: Either remove copy or test that it works.
+    root = copy.copy(root)      # We will change root.
+
+    func_c = compile_node(root.func)
+
+    # Getting the args of a function call is complex.
+    root.func = ast.Name(
+        id = '@get_args',
+        ctx=ast.Load(),
+        # Need to supply line_no and col_offset.
+        lineno = 0,
+        col_offset = 0
+        )
+    args_c = compile_node(root)
+
+    # Create the closure function.
+    def call(eval_code):
+
+        func = eval_code(func_c)
+        args = eval_code(args_c)
+
+        if func.exception or args.exception:
+            return 'Error setting up function call'
+        else:
+            return try_apply(func.value, *args.value)
+    # Return the closure function.
+    return call
