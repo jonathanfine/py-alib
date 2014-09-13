@@ -4,9 +4,8 @@ import os
 import re
 
 if 1:
-    from .evaluator import Evaluator
     from .script import Script
-    from .evaluator import Evaluator
+    from .evaluator import lookup
 
 
 # TODO: On Linux import not finding AAA.PY.
@@ -30,8 +29,7 @@ def testit(filename):
         script = Script(f.read())
 
     # TODO: Remove this ugliness.
-    evaluator = dict(compare=Evaluator.compare, pow=Evaluator.pow)
-    test_results = script.run(evaluator, {})
+    test_results = script.run(lookup, {})
 
     # Report on the outcome.
     success_count = 0
