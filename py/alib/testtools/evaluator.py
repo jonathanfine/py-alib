@@ -20,7 +20,7 @@ def inspect(node):
         if type(value) is ast.Compare:
             return compare_factory(value)
         elif type(value) is ast.BinOp and type(value.op) is ast.Pow:
-            return Pow(value)
+            return pow_factory(value)
 
 
 compare_dict = dict(
@@ -75,38 +75,31 @@ def compare_factory(node):
     return compare
 
 
-class Pow:
+def pow_factory(node):
 
-    def __init__(self, node):
-
-        assert type(node) is ast.BinOp and type(node.op) is ast.Pow
-
-        self.code = [
-            compile(ast.Expression(v), '', 'eval')
-            for v in (node.left, node.right)
-            ]
-
-
-    def __call__(self, locals_dict, globals_dict):
-
-        return pow(locals_dict, globals_dict, self.code)
-
-
-def pow(locals_dict, globals_dict, codes):
-
-    clean = True
-    left, right = values = [
-        try_eval(code, globals_dict, locals_dict)
-        for code in codes
+    codes = [
+        compile(ast.Expression(v), '', 'eval')
+        for v in (node.left, node.right)
         ]
 
-    if left.exception is None:
-        if right.exception:
-            return values
-        else:
-            return 'Expected but did not get exception'
+    def pow(l_dict, g_dict):
 
-    if isinstance(left.exception, right.value):
-        return None
-    else:
-        return values
+        clean = True
+        left, right = values = [
+            # TODO: Sort aout l_dict, g_dict order mismatch.
+            try_eval(code, g_dict, l_dict)
+            for code in codes
+            ]
+
+        if left.exception is None:
+            if right.exception:
+                return values
+            else:
+                return 'Expected but did not get exception'
+
+        if isinstance(left.exception, right.value):
+            return None
+        else:
+            return values
+
+    return pow
