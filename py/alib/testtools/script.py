@@ -4,6 +4,8 @@ import itertools
 import os
 import sys
 from ..asttools import replace
+from .evaluator import Compare
+from .evaluator import Pow
 
 __metaclass__ = type
 
@@ -30,22 +32,9 @@ def inspect(node):
 
         value = node.value
         if type(value) is ast.Compare:
-            return (
-                'compare',
-                [
-                    compile(ast.Expression(v), '', 'eval')
-                    for v in [value.left] + value.comparators
-                    ],
-                [type(op).__name__ for op in value.ops]
-                )
+            return Compare(value)
         elif type(value) is ast.BinOp and type(value.op) is ast.Pow:
-            return (
-                'pow',
-                [
-                    compile(ast.Expression(v), '', 'eval')
-                    for v in (value.left, value.right)
-                    ]
-                )
+            return Pow(value)
 
 
 class Script:
@@ -80,13 +69,7 @@ class Script:
 
             f_caller = sys._getframe().f_back
             code = self.code_store[test_no]
-            key = code[0]
-            # TODO: At present this return value is ignore.
-            result = evaluator[key](
-                f_caller.f_locals,
-                f_caller.f_globals,
-                *code[1:]
-                )
+            result = code(f_caller.f_locals, f_caller.f_globals)
             test_results.append(result)
 
 

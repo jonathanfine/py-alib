@@ -3,8 +3,11 @@
 
 from __future__ import absolute_import
 
-from ..trytools import try_eval
+import ast
 import operator
+
+from ..trytools import try_eval
+
 
 __metaclass__ = type
 
@@ -19,6 +22,39 @@ compare_dict = dict(
     NotEq = operator.ne,
     )
 
+
+class Compare:
+
+    def __init__(self, node):
+
+        assert type(node) is ast.Compare
+        self.code = [
+            compile(ast.Expression(v), '', 'eval')
+            for v in [node.left] + node.comparators
+            ]
+        self.ops = [type(op).__name__ for op in node.ops]
+
+
+    def __call__(self, locals_dict, globals_dict):
+
+        return compare(locals_dict, globals_dict, self.code, self.ops)
+
+
+class Pow:
+
+    def __init__(self, node):
+
+        assert type(node) is ast.BinOp and type(node.op) is ast.Pow
+
+        self.code = [
+            compile(ast.Expression(v), '', 'eval')
+            for v in (node.left, node.right)
+            ]
+
+
+    def __call__(self, locals_dict, globals_dict):
+
+        return pow(locals_dict, globals_dict, self.code)
 
 
 def compare(locals_dict, globals_dict, codes, ops):
@@ -49,7 +85,6 @@ def compare(locals_dict, globals_dict, codes, ops):
         return None
     else:
         return ops, values
-
 
 
 def pow(locals_dict, globals_dict, codes):

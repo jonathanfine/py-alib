@@ -11,11 +11,12 @@ class DummyEvaluator:
         # TODO: Test the key apppend to the store.
         self.store.append(argv[-1:]) # Discard key, local and global dicts.
 
+# TODO: Provide some tests - I've clobbered them all.
 # Create and run a script.
 s = Script('2 + 2 == 5;2 < 4')
-[c[0] for c in s.code_store] == ['compare', 'compare']
+# [c[0] for c in s.code_store] == ['compare', 'compare']
 # c[1] is the code objects.
-[c[2] for c in s.code_store] == [['Eq'], ['Lt']]
+# [c[2] for c in s.code_store] == [['Eq'], ['Lt']]
 
 # TODO: Reinstate or remove these tests.
 # evaluator = DummyEvaluator()
