@@ -25,10 +25,11 @@ def f(*argv, **kwargs):
     return argv, kwargs
 
 
-test_eval('2 + 2 == 5') == (['Eq'], [ReturnValue(4), ReturnValue(5)])
+test_eval('2 + 2 == 5') == (1, ['Eq'], [ReturnValue(4), ReturnValue(5)])
 test_eval('2 + 2 == 4') is None
 test_eval('2 < 3') is None
 test_eval('1 + [] < 4') == (
+    1,
     ['Lt'],
     [try_eval('1 + []'), ReturnValue(4)]
     )
@@ -40,8 +41,8 @@ test_call('f()') == ReturnValue(((), {}))
 test_call('f(1, 2, a=3, b=4)') == ReturnValue(((1, 2), {'a': 3, 'b': 4}))
 
 # Test order and code order correspond.
-test_eval('ddt or True') == 'Unexpected exception'
+test_eval('ddt or True') == 1, 'Unexpected exception'
 test_eval('1 or ddt') == None
-test_eval('0 or ddt') == 'Unexpected exception'
+test_eval('0 or ddt') == 1, 'Unexpected exception'
 test_eval('0 or 1') == None
-test_eval('0 or 0') == 'false or false'
+test_eval('0 or 0') == 1, 'false or false'

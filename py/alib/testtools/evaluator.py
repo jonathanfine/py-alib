@@ -76,6 +76,8 @@ def compile_nodes(nodes):
 
 def compare_factory(node):
 
+    lineno = node.lineno
+
     codes = compile_nodes([node.left] + node.comparators)
     ops = [type(op).__name__ for op in node.ops]
 
@@ -106,12 +108,14 @@ def compare_factory(node):
         if clean:
             return None
         else:
-            return ops, values
+            return lineno, ops, values
 
     return compare
 
 
 def pow_factory(node):
+
+    lineno = node.lineno
 
     # TODO: I don't have much confidence in the logic of this code.
 
@@ -127,19 +131,21 @@ def pow_factory(node):
 
         if left.exception is None:
             if right.exception:
-                return values   # TODO: Unknown identifier.
+                return lineno, values # TODO: Unknown identifier.
             else:
-                return 'Expected but did not get exception'
+                return lineno, 'Expected but did not get exception'
 
         if isinstance(left.exception, right.value):
             return None
         else:
-            return values
+            return lineno, values
 
     return pow
 
 
 def call_factory(root):
+
+    lineno = root.lineno
 
     # TODO: Either remove copy or test that it works.
     root = copy.copy(root)      # We will change root.
@@ -163,7 +169,7 @@ def call_factory(root):
         args = eval_code(args_c)
 
         if func.exception or args.exception:
-            return 'Error setting up function call'
+            return lineno, 'Error setting up function call'
         else:
             return try_apply(func.value, *args.value)
     # Return the closure function.
@@ -172,6 +178,8 @@ def call_factory(root):
 
 def or_factory(root):
 
+    lineno = root.lineno
+
     left_c, right_c = map(compile_node, root.values)
 
     def or_(eval_code):
@@ -179,19 +187,19 @@ def or_factory(root):
         # Test order and code order correspond.
         left = eval_code(left_c)
         if left.exception:
-            return 'Unexpected exception'
+            return lineno, 'Unexpected exception'
         else:
             if left.value:
                 return None
             else:
                 right = eval_code(right_c)
                 if right.exception:
-                    return 'Unexpected exception'
+                    return lineno, 'Unexpected exception'
                 else:
                     if right.value:
                         return None
                     else:
-                        return 'false or false'
+                        return lineno, 'false or false'
 
         return                  # Should not happen.
 
