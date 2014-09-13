@@ -34,14 +34,20 @@ compare_dict = dict(
     )
 
 
+def compile_node(node):
+
+    return compile(ast.Expression(node), '', 'eval')
+
+
+def compile_nodes(nodes):
+
+    return tuple(map(compile_node, nodes))
+
+
 def compare_factory(node):
 
-    codes = [
-        compile(ast.Expression(v), '', 'eval')
-        for v in [node.left] + node.comparators
-        ]
+    codes = compile_nodes([node.left] + node.comparators)
     ops = [type(op).__name__ for op in node.ops]
-
 
     def compare(l_dict, g_dict):
 
@@ -77,23 +83,19 @@ def compare_factory(node):
 
 def pow_factory(node):
 
-    codes = [
-        compile(ast.Expression(v), '', 'eval')
-        for v in (node.left, node.right)
-        ]
+    c_left = compile_node(node.left)
+    c_right = compile_node(node.right)
 
     def pow(l_dict, g_dict):
 
         clean = True
-        left, right = values = [
-            # TODO: Sort aout l_dict, g_dict order mismatch.
-            try_eval(code, g_dict, l_dict)
-            for code in codes
-            ]
+        # TODO: Sort out l_dict, g_dict order mismatch.
+        left = try_eval(c_left, g_dict, l_dict)
+        right = try_eval(c_right, g_dict, l_dict)
 
         if left.exception is None:
             if right.exception:
-                return values
+                return values   # TODO: Unknown identifier.
             else:
                 return 'Expected but did not get exception'
 
