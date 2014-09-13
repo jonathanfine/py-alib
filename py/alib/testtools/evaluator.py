@@ -34,6 +34,16 @@ compare_dict = dict(
     )
 
 
+def code_evaluator_factory(l_dict, g_dict):
+
+    def code_evaluator(code):
+
+        # TODO: Sort out l_dict, g_dict order mismatch.
+        return try_eval(code, g_dict, l_dict)
+
+    return code_evaluator
+
+
 def compile_node(node):
 
     return compile(ast.Expression(node), '', 'eval')
@@ -51,12 +61,14 @@ def compare_factory(node):
 
     def compare(l_dict, g_dict):
 
+        code_evaluator = code_evaluator_factory(l_dict, g_dict)
+
         # TODO: Special case a single operation.
         # TODO: If you special case that, make sure you test.
         clean = True
         values = []
         for code in codes:
-            val_or_exc = try_eval(code, g_dict, l_dict)
+            val_or_exc = code_evaluator(code)
             if val_or_exc.exception:
                 clean = False
             values.append(val_or_exc)
@@ -86,12 +98,13 @@ def pow_factory(node):
     c_left = compile_node(node.left)
     c_right = compile_node(node.right)
 
+    # TODO: Parameter is callable that can evaluate code.
     def pow(l_dict, g_dict):
 
+        code_evaluator = code_evaluator_factory(l_dict, g_dict)
+        left, right = map(code_evaluator, [c_left, c_right])
+
         clean = True
-        # TODO: Sort out l_dict, g_dict order mismatch.
-        left = try_eval(c_left, g_dict, l_dict)
-        right = try_eval(c_right, g_dict, l_dict)
 
         if left.exception is None:
             if right.exception:
