@@ -3,7 +3,7 @@ import ast
 import itertools
 import os
 import sys
-from .asttools import replace
+from ..asttools import replace
 
 __metaclass__ = type
 

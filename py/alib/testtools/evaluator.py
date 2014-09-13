@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 
-from .trytools import try_eval
+from ..trytools import try_eval
 import operator
 
 __metaclass__ = type

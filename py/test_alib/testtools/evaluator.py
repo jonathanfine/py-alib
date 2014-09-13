@@ -1,6 +1,6 @@
-from alib.script import Script
+from alib.testtools.script import Script
 from alib.trytools import ReturnValue, ExceptionInstance
-from alib.evaluator import Evaluator
+from alib.testtools.evaluator import Evaluator
 from alib.trytools import try_eval
 
 def test_eval(src):

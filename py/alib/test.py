@@ -3,8 +3,8 @@ from __future__ import absolute_import
 import os
 import sys
 
-from .testtools import testit
-from .testtools import d_cond, f_cond, iter_d_f
+from .testtools.testtools import testit
+from .testtools.testtools import d_cond, f_cond, iter_d_f
 
 if __name__ == '__main__':
 

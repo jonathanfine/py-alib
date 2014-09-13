@@ -1,4 +1,4 @@
-from alib.script import Script
+from alib.testtools.script import Script
 
 # Here's a dummy log, for testing Script.
 class DummyEvaluator:
