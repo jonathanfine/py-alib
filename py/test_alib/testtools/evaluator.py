@@ -1,12 +1,13 @@
-from alib.testtools.script import Script
-from alib.trytools import ReturnValue, ExceptionInstance
-from alib.trytools import try_eval
+import ast
+from alib.trytools import try_eval, ReturnValue, ExceptionInstance
+from alib.testtools.evaluator import inspect
+from alib.asttools import parse_expr
 
 def test_eval(src):
-    script = Script(src)
-    actual = script.run()
-    assert len(actual) == 1
-    return actual[0]
+
+    node = parse_expr(src)
+    fn = inspect(ast.Expr(node))
+    return fn({},{})
 
 
 test_eval('2 + 2 == 5') == (['Eq'], [ReturnValue(4), ReturnValue(5)])
