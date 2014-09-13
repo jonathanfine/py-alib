@@ -5,7 +5,6 @@ import re
 
 if 1:
     from .script import Script
-    from .evaluator import lookup
 
 
 # TODO: On Linux import not finding AAA.PY.
@@ -28,8 +27,7 @@ def testit(filename):
     with open(filename) as f:
         script = Script(f.read())
 
-    # TODO: Remove this ugliness.
-    test_results = script.run(lookup, {})
+    test_results = script.run({})
 
     # Report on the outcome.
     success_count = 0

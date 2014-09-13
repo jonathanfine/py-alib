@@ -110,7 +110,3 @@ def pow(locals_dict, globals_dict, codes):
         return None
     else:
         return values
-
-
-# TODO: Redundant, so remove.
-lookup = dict(pow=pow)

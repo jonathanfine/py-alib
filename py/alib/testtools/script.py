@@ -40,7 +40,7 @@ class Script:
         self.code_store = removed
 
 
-    def run(self, evaluator, globals_dict=None):
+    def run(self, globals_dict=None):
         '''Run script, rewritten expression passed to evaluator.
 
         Code objects are passed to evaluator methods.  The evaluator

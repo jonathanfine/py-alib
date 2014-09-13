@@ -1,11 +1,10 @@
 from alib.testtools.script import Script
 from alib.trytools import ReturnValue, ExceptionInstance
-from alib.testtools.evaluator import lookup
 from alib.trytools import try_eval
 
 def test_eval(src):
     script = Script(src)
-    actual = script.run(lookup)
+    actual = script.run()
     assert len(actual) == 1
     return actual[0]
 
