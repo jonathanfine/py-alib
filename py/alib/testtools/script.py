@@ -5,6 +5,8 @@ import os
 import sys
 from ..asttools import replace
 from .evaluator import inspect
+from .evaluator import eval_code_factory
+
 
 __metaclass__ = type
 
@@ -35,9 +37,8 @@ class Script:
 
         # Make and use the tree in the new way.
         tree = ast.parse(source, filename=self.filename)
-        removed = list(replace(tree, inspect, make_iter_splice_nodes()))
+        self.actions = list(replace(tree, inspect, make_iter_splice_nodes()))
         self.code = compile(tree, self.filename, 'exec')
-        self.code_store = removed
 
 
     def run(self, globals_dict=None):
@@ -56,8 +57,12 @@ class Script:
         def run_test(test_no):
 
             f_caller = sys._getframe().f_back
-            code = self.code_store[test_no]
-            result = code(f_caller.f_locals, f_caller.f_globals)
+            eval_code = eval_code_factory(f_caller.f_locals, f_caller.f_globals)
+
+            # TODO: Clarify and resolve names and delegation of control.
+            action = self.actions[test_no]
+            result = action(eval_code)
+
             test_results.append(result)
 
 

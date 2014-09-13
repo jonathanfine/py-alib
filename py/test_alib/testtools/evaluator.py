@@ -1,13 +1,15 @@
 import ast
 from alib.trytools import try_eval, ReturnValue, ExceptionInstance
 from alib.testtools.evaluator import inspect
+from alib.testtools.evaluator import eval_code_factory
 from alib.asttools import parse_expr
 
 def test_eval(src):
 
     node = parse_expr(src)
     fn = inspect(ast.Expr(node))
-    return fn({},{})
+    evaluator = eval_code_factory({}, {})
+    return fn(evaluator)
 
 
 test_eval('2 + 2 == 5') == (['Eq'], [ReturnValue(4), ReturnValue(5)])
