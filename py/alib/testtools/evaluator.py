@@ -18,7 +18,7 @@ def inspect(node):
 
         value = node.value
         if type(value) is ast.Compare:
-            return Compare(value)
+            return compare_factory(value)
         elif type(value) is ast.BinOp and type(value.op) is ast.Pow:
             return Pow(value)
 
@@ -34,21 +34,45 @@ compare_dict = dict(
     )
 
 
-class Compare:
+def compare_factory(node):
 
-    def __init__(self, node):
-
-        assert type(node) is ast.Compare
-        self.code = [
-            compile(ast.Expression(v), '', 'eval')
-            for v in [node.left] + node.comparators
-            ]
-        self.ops = [type(op).__name__ for op in node.ops]
+    codes = [
+        compile(ast.Expression(v), '', 'eval')
+        for v in [node.left] + node.comparators
+        ]
+    ops = [type(op).__name__ for op in node.ops]
 
 
-    def __call__(self, locals_dict, globals_dict):
+    def compare(l_dict, g_dict):
 
-        return compare(locals_dict, globals_dict, self.code, self.ops)
+        # TODO: Special case a single operation.
+        # TODO: If you special case that, make sure you test.
+        clean = True
+        values = []
+        for code in codes:
+            val_or_exc = try_eval(code, g_dict, l_dict)
+            if val_or_exc.exception:
+                clean = False
+            values.append(val_or_exc)
+
+        comparisons = []
+        for left, op, right in zip(values, ops, values[1:]):
+
+            # TODO: Might raise exception.
+            if left.exception or right.exception:
+                comp = None
+            else:
+                comp = bool(compare_dict[op](left.value, right.value))
+                if not comp:
+                    clean = False
+            comparisons.append(comp)
+
+        if clean:
+            return None
+        else:
+            return ops, values
+
+    return compare
 
 
 class Pow:
@@ -66,36 +90,6 @@ class Pow:
     def __call__(self, locals_dict, globals_dict):
 
         return pow(locals_dict, globals_dict, self.code)
-
-
-def compare(locals_dict, globals_dict, codes, ops):
-
-    # TODO: Special case a single operation.
-    # TODO: If you special case that, make sure you test.
-    clean = True
-    values = []
-    for code in codes:
-        val_or_exc = try_eval(code, globals_dict, locals_dict)
-        if val_or_exc.exception:
-            clean = False
-        values.append(val_or_exc)
-
-    comparisons = []
-    for left, op, right in zip(values, ops, values[1:]):
-
-        # TODO: Might raise exception.
-        if left.exception or right.exception:
-            comp = None
-        else:
-            comp = bool(compare_dict[op](left.value, right.value))
-            if not comp:
-                clean = False
-        comparisons.append(comp)
-
-    if clean:
-        return None
-    else:
-        return ops, values
 
 
 def pow(locals_dict, globals_dict, codes):
@@ -117,4 +111,6 @@ def pow(locals_dict, globals_dict, codes):
     else:
         return values
 
-lookup = dict(compare=compare, pow=pow)
+
+# TODO: Redundant, so remove.
+lookup = dict(pow=pow)
