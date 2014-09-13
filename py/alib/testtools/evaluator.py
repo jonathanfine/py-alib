@@ -14,6 +14,7 @@ from ..trytools import try_apply
 __metaclass__ = type
 
 
+# TODO: Warn of expressions being skipped.
 def inspect(node):
 
     if isinstance(node, ast.Expr):
@@ -21,8 +22,18 @@ def inspect(node):
         value = node.value
         if type(value) is ast.Compare:
             return compare_factory(value)
+
         elif type(value) is ast.BinOp and type(value.op) is ast.Pow:
             return pow_factory(value)
+
+        elif type(value) is ast.BoolOp:
+
+            # TODO: Allow for more than 2 values.
+            # NOTE: Test coverage and functionality must agree.
+            if len(value.values) == 2:
+                if isinstance(value.op, ast.Or):
+                    return or_factory(value)
+            return None
 
 
 compare_dict = dict(
@@ -157,3 +168,31 @@ def call_factory(root):
             return try_apply(func.value, *args.value)
     # Return the closure function.
     return call
+
+
+def or_factory(root):
+
+    left_c, right_c = map(compile_node, root.values)
+
+    def or_(eval_code):
+
+        # Test order and code order correspond.
+        left = eval_code(left_c)
+        if left.exception:
+            return 'Unexpected exception'
+        else:
+            if left.value:
+                return None
+            else:
+                right = eval_code(right_c)
+                if right.exception:
+                    return 'Unexpected exception'
+                else:
+                    if right.value:
+                        return None
+                    else:
+                        return 'false or false'
+
+        return                  # Should not happen.
+
+    return or_

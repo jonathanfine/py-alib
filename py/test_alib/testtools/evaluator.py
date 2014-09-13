@@ -38,3 +38,10 @@ test_eval('(1 + []) ** Exception') is None
 
 test_call('f()') == ReturnValue(((), {}))
 test_call('f(1, 2, a=3, b=4)') == ReturnValue(((1, 2), {'a': 3, 'b': 4}))
+
+# Test order and code order correspond.
+test_eval('ddt or True') == 'Unexpected exception'
+test_eval('1 or ddt') == None
+test_eval('0 or ddt') == 'Unexpected exception'
+test_eval('0 or 1') == None
+test_eval('0 or 0') == 'false or false'
