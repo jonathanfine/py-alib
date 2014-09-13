@@ -6,8 +6,7 @@ from alib.trytools import try_eval
 def test_eval(src):
     script = Script(src)
     evaluator = Evaluator()
-    script.run(evaluator)
-    actual = evaluator.data
+    actual = script.run(evaluator)
     assert len(actual) == 1
     return actual[0]
 

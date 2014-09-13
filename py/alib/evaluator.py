@@ -24,9 +24,10 @@ class Evaluator:
 
     def __init__(self):
 
-        self.data = []
+        pass                    # Was self.data = [].
 
-    def compare(self, locals_dict, globals_dict, codes, ops):
+    @staticmethod
+    def compare(locals_dict, globals_dict, codes, ops):
 
         # TODO: Special case a single operation.
         # TODO: If you special case that, make sure you test.
@@ -51,14 +52,13 @@ class Evaluator:
             comparisons.append(comp)
 
         if clean:
-            self.data.append(None)
             return None
         else:
-            self.data.append((ops, values))
             return ops, values
 
 
-    def pow(self, locals_dict, globals_dict, codes):
+    @staticmethod
+    def pow(locals_dict, globals_dict, codes):
 
         clean = True
         left, right = values = [
@@ -68,15 +68,11 @@ class Evaluator:
 
         if left.exception is None:
             if right.exception:
-                self.data.append(values)
                 return values
             else:
-                self.data.append('Expected but did not get exception')
                 return 'Expected but did not get exception'
 
         if isinstance(left.exception, right.value):
-            self.data.append(None)
             return None
         else:
-            self.data.append(values)
             return values

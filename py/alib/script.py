@@ -89,15 +89,13 @@ class Script:
                 )
             test_results.append(result)
 
-        if test_results != evaluator.data:
-            print((test_results, evaluator.data))
-
 
         globals_dict.update(
             _run_test=run_test, # Evaluate changed expressions.
             )
 
         eval(self.code, globals_dict)
+        return test_results
 
 
 

@@ -29,16 +29,16 @@ def testit(filename):
         script = Script(f.read())
 
     evaluator = Evaluator()
-    script.run(evaluator, {})
+    test_results = script.run(evaluator, {})
 
     # Report on the outcome.
     success_count = 0
-    for val in evaluator.data:
+    for val in test_results:
         if val is None:
             success_count += 1
 
-    print('Total of {0} tests, {1} success.'.format(len(evaluator.data), success_count))
+    print('Total of {0} tests, {1} success.'.format(len(test_results), success_count))
 
-    for i, val in enumerate(evaluator.data, 1):
+    for i, val in enumerate(test_results, 1):
         if val is not None:
             print((i, val))
