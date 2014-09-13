@@ -5,7 +5,8 @@ from alib.trytools import try_eval
 
 def test_eval(src):
     script = Script(src)
-    evaluator = Evaluator()
+    # TODO: Remove this ugliness.
+    evaluator = dict(compare=Evaluator.compare, pow=Evaluator.pow)
     actual = script.run(evaluator)
     assert len(actual) == 1
     return actual[0]

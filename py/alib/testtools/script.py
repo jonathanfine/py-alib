@@ -82,7 +82,7 @@ class Script:
             code = self.code_store[test_no]
             key = code[0]
             # TODO: At present this return value is ignore.
-            result = getattr(evaluator, key)(
+            result = evaluator[key](
                 f_caller.f_locals,
                 f_caller.f_globals,
                 *code[1:]

@@ -6,6 +6,7 @@ import re
 if 1:
     from .evaluator import Evaluator
     from .script import Script
+    from .evaluator import Evaluator
 
 
 # TODO: On Linux import not finding AAA.PY.
@@ -28,7 +29,8 @@ def testit(filename):
     with open(filename) as f:
         script = Script(f.read())
 
-    evaluator = Evaluator()
+    # TODO: Remove this ugliness.
+    evaluator = dict(compare=Evaluator.compare, pow=Evaluator.pow)
     test_results = script.run(evaluator, {})
 
     # Report on the outcome.
