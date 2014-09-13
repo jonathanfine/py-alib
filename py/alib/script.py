@@ -72,6 +72,8 @@ class Script:
         if globals_dict is None:
             globals_dict = {}
 
+        test_results = []
+
         # Use a closure so we capture the evaluator.
         # Could also use a instance method + functools.partial.
         def run_test(test_no):
@@ -79,11 +81,17 @@ class Script:
             f_caller = sys._getframe().f_back
             code = self.code_store[test_no]
             key = code[0]
-            return getattr(evaluator, key)(
+            # TODO: At present this return value is ignore.
+            result = getattr(evaluator, key)(
                 f_caller.f_locals,
                 f_caller.f_globals,
                 *code[1:]
                 )
+            test_results.append(result)
+
+        if test_results != evaluator.data:
+            print((test_results, evaluator.data))
+
 
         globals_dict.update(
             _run_test=run_test, # Evaluate changed expressions.

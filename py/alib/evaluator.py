@@ -52,8 +52,10 @@ class Evaluator:
 
         if clean:
             self.data.append(None)
+            return None
         else:
             self.data.append((ops, values))
+            return ops, values
 
 
     def pow(self, locals_dict, globals_dict, codes):
@@ -67,12 +69,14 @@ class Evaluator:
         if left.exception is None:
             if right.exception:
                 self.data.append(values)
+                return values
             else:
                 self.data.append('Expected but did not get exception')
-            return
+                return 'Expected but did not get exception'
 
         if isinstance(left.exception, right.value):
             self.data.append(None)
-            return
+            return None
         else:
             self.data.append(values)
+            return values
