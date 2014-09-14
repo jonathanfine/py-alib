@@ -131,14 +131,14 @@ def pow_factory(node):
 
         if left.exception is None:
             if right.exception:
-                return lineno, values # TODO: Unknown identifier.
+                return lineno, right.exception
             else:
                 return lineno, 'Expected but did not get exception'
 
         if isinstance(left.exception, right.value):
             return None
         else:
-            return lineno, values
+            return lineno, left.exception, right.value
 
     return pow
 

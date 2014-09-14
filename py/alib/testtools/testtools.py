@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+import linecache
 import os
 import re
 
@@ -37,6 +38,12 @@ def testit(filename):
 
     print('Total of {0} tests, {1} success.'.format(len(test_results), success_count))
 
+    src_line_format = 'line {0}:  {1}'.format
     for i, val in enumerate(test_results, 1):
         if val is not None:
-            print((i, val))
+            lineno = val[0]
+            error = val[1:]
+            src_line = linecache.getline(filename, lineno).strip()
+            print(src_line_format(lineno, src_line))
+            # TODO: Tidy up format of this line.
+            print('          ' + repr(error))
