@@ -1,9 +1,3 @@
-A LIB-rary of useful Python code
-================================
-
-Testing
-^^^^^^^
-
 Alib provides simple testing without boilerplate.  For example, if
 *myfile.py* contains the line::
 
