@@ -22,6 +22,7 @@ setup(
     author_email = 'jfine@pytex.org',
     license = 'Apache',
     url = 'https://github.com/jonathanfine/py-alib',
+    download_url = 'https://github.com/jonathanfine/py-alib/tarball/0.0.1a1',
     keywords = ['testing'],
     classifiers = [
         'Development Status :: 3 - Alpha',
