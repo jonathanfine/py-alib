@@ -25,8 +25,18 @@ def testit(filename):
 
     print('Testing ' + filename)
 
-    with open(filename) as f:
-        script = Script(f.read())
+    # Don't fall over if filename does not exist - #1.
+    # Instead print the exception and return.
+    try:
+        with open(filename) as f:
+            src = f.read()
+    except KeyboardInterrupt:
+        raise
+    except Exception as e:
+        print(e)
+        return
+
+    script = Script(src)
 
     test_results = script.run({})
 
