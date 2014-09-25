@@ -2,6 +2,8 @@
 # Copied from misc/testutil.py.
 # TODO: Copy or port over the tests.
 
+import functools
+
 class singleton(tuple):
 
     '''Create a single element tuple. Use to hold/wrap a value.
@@ -97,4 +99,19 @@ def try_eval(*argv):
     except Exception as e:
         return ExceptionInstance(e)
     return ReturnValue(value)
+
+# TODO: Is this useful.
+def try_wrap(fn):
+
+    @functools.wraps(fn)
+    def inner(*argv, **kwargs):
+        try:
+            value = fn(*argv, **kwargs)
+        except Exception as e:
+            return ExceptionInstance(e)
+        return ReturnValue(value)
+
+    return inner
+
+
 
