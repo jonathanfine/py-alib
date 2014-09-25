@@ -3,10 +3,15 @@ from __future__ import absolute_import
 import linecache
 import os
 import re
+from functools import partial
 from ..contextlib import Suppress
 
 if 1:
     from .script import Script
+
+# This makes it easier and safer to suppress all but
+# KeyboardInterrupt.
+suppress = partial(Suppress, KeyboardInterrupt)
 
 
 # TODO: On Linux import not finding AAA.PY.
@@ -28,18 +33,17 @@ def testit(filename):
 
     # Don't fall over if filename does not exist - #1.
     # Instead print the exception and return.
-    with Suppress() as suppressed:
+    with suppress() as suppressed:
         with open(filename) as f:
             src = f.read()
 
-    suppressed.raise_if(KeyboardInterrupt)
+        script = Script(src)
+        test_results = script.run({})
+
     if suppressed:
-        print(suppressed.value)
+        # TODO: Improve str(suppressed).
+        print(repr(suppressed.value))
         return
-
-    script = Script(src)
-
-    test_results = script.run({})
 
     # Report on the outcome.
     success_count = 0
