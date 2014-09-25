@@ -20,6 +20,15 @@ class Suppressed:
     __nonzero__ = __bool__      # For Python 2.5, 2.6 and 2.7.
 
 
+    def raise_if(self, excp_types):
+        '''Raise self.value if instance of excp_types.'''
+
+        # We assume that excp is either None or an exception.
+        excp = self.value
+        if excp and isinstance(excp, excp_types):
+            raise excp
+
+
 class Suppress:
 
     def __init__(self, reraise=()):
@@ -42,6 +51,3 @@ class Suppress:
         # Still here? Then suppress the exception.
         self.suppressed.value = exc_value
         return True
-
-
-

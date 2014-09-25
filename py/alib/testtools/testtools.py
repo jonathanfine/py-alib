@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import linecache
 import os
 import re
+from ..contextlib import Suppress
 
 if 1:
     from .script import Script
@@ -27,13 +28,13 @@ def testit(filename):
 
     # Don't fall over if filename does not exist - #1.
     # Instead print the exception and return.
-    try:
+    with Suppress() as suppressed:
         with open(filename) as f:
             src = f.read()
-    except KeyboardInterrupt:
-        raise
-    except Exception as e:
-        print(e)
+
+    suppressed.raise_if(KeyboardInterrupt)
+    if suppressed:
+        print(suppressed.value)
         return
 
     script = Script(src)

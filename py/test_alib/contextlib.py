@@ -39,6 +39,11 @@ bool(doit(exception, ())) is True
 suppressed = doit(exception, ())
 suppressed.value is exception
 
+suppressed.raise_if(ValueError) ** ValueError
+suppressed.raise_if(Exception) ** ValueError
+suppressed.raise_if(TypeError) is None
+
+
 # In both cases we get an instance of Suppressed.  But if no exception
 # is raised then as a boolean it is false.
 type(suppressed) is Suppressed
